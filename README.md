@@ -3,6 +3,8 @@
 Android の **フォントスケール** を WebView 上でも正しくスケールさせる方法を示すデモアプリです。  
 [iOS 版（DynamicTypeWebViewDemo）](https://github.com/shin-carpediem/DynamicTypeWebViewDemo) の Android 対応版です。
 
+<img width="350" alt="Screenshot_20260503_125638" src="https://github.com/user-attachments/assets/e926dfec-7b35-4737-b33f-20bb19c535a5" />
+
 ## 概要
 
 ネイティブ View は Android のフォントスケール設定に自動対応しますが、WebView 内の HTML/CSS はデフォルトでは追従しません。  
