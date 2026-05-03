@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Scale Demo</title>
+    <style>
+        /*
+         * ポイント①: body に font-size を指定
+         * Android アプリ側から JavaScript で fontScale に応じて更新する
+         * (iOS の font: -apple-system-body に相当)
+         */
+        body {
+            font-size: 16px; /* JavaScript の setFontScale() で上書きされる */
+            margin: 0;
+            padding: 0 0 48px;
+            background-color: #f2f2f7;
+            color: #1c1c1e;
+        }
+
+        /* ===== ページヘッダー ===== */
+        .page-header {
+            background: linear-gradient(135deg, #3ddc84, #1a8f4e);
+            color: white;
+            padding: 1.25em 1em 1.5em;
+        }
+
+        .page-header h1 {
+            font-size: 1.286em;
+            font-weight: 700;
+            margin: 0 0 0.4em;
+        }
+
+        .page-header p {
+            font-size: 0.857em;
+            margin: 0;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* ===== 現在のフォントサイズ表示 ===== */
+        .font-size-indicator {
+            background: white;
+            margin: 1em;
+            border-radius: 12px;
+            padding: 0.857em 1em;
+            display: flex;
+            align-items: center;
+            gap: 0.75em;
+        }
+
+        .font-size-indicator .icon {
+            font-size: 1.5em;
+        }
+
+        .font-size-indicator .label {
+            font-size: 0.857em;
+            color: #6e6e73;
+            flex: 1;
+        }
+
+        .font-size-indicator .value {
+            font-size: 1.143em;
+            font-weight: 700;
+            color: #3ddc84;
+        }
+
+        /* ===== セクション共通 ===== */
+        section {
+            margin: 0 1em 1em;
+        }
+
+        .section-label {
+            font-size: 0.786em;
+            font-weight: 600;
+            color: #6e6e73;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5em;
+            padding: 0 0.25em;
+        }
+
+        .card-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card {
+            padding: 0.857em 1em;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .card:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15em 0.5em;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 700;
+            margin-bottom: 0.4em;
+        }
+
+        /* ===== ✅ 対応済み（em 単位）===== */
+        .good-section .section-label { color: #34c759; }
+        .good-badge { background: #34c759; color: white; }
+
+        /*
+         * ポイント②: font-size は em を使う（body を基準とした相対値）
+         * → body のサイズが変われば連動してスケールする
+         */
+        .good-title {
+            font-size: 1.143em;   /* ≈ 16px at standard scale */
+            font-weight: 600;
+            margin: 0 0 0.25em;
+        }
+
+        .good-description {
+            font-size: 0.857em;   /* ≈ 12px at standard scale */
+            color: #6e6e73;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* ===== ❌ 未対応（px 固定）===== */
+        .bad-section .section-label { color: #ff3b30; }
+        .bad-badge { background: #ff3b30; color: white; }
+        .bad-card { background: #fff5f5; }
+
+        /* ❌ px 固定はフォントスケールが変わっても変化しない */
+        .bad-title {
+            font-size: 16px;   /* 固定 px → スケールしない */
+            font-weight: 600;
+            margin: 0 0 0.25em;
+        }
+
+        .bad-description {
+            font-size: 12px;   /* 固定 px → スケールしない */
+            color: #6e6e73;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* ===== コード表示 ===== */
+        .code-block {
+            background: #1c1c1e;
+            border-radius: 12px;
+            padding: 1em;
+            overflow-x: auto;
+        }
+
+        pre {
+            margin: 0;
+            font-family: 'Roboto Mono', 'Menlo', monospace;
+            font-size: 0.8em;
+            line-height: 1.7;
+            color: #f8f8f2;
+            white-space: pre;
+        }
+
+        .c-comment  { color: #6272a4; }
+        .c-selector { color: #a8ff78; }
+        .c-bad-sel  { color: #ff5f56; }
+        .c-prop     { color: #66d9ef; }
+        .c-val-good { color: #a8ff78; }
+        .c-val-bad  { color: #ff5f56; }
+        .c-val      { color: #e6db74; }
+    </style>
+</head>
+<body>
+
+    <div class="page-header">
+        <h1>Font Scale × WebView</h1>
+        <p>
+            OSの「設定 → ディスプレイ → フォントサイズ」でフォントサイズを変更すると、
+            アプリが <code>onConfigurationChanged</code> で検知してこのページに反映されます。
+        </p>
+    </div>
+
+    <!-- 現在のフォントサイズ -->
+    <div class="font-size-indicator">
+        <span class="icon">🔤</span>
+        <span class="label">WebView の body フォントサイズ（実測値）</span>
+        <span class="value" id="font-size-value">---</span>
+    </div>
+
+    <!-- ✅ 対応済み -->
+    <section class="good-section">
+        <div class="section-label">✅ 対応済み — em 単位で指定</div>
+        <div class="card-list">
+            <div class="card">
+                <span class="badge good-badge">GOOD</span>
+                <div class="good-title">お知らせ：新機能がリリースされました</div>
+                <p class="good-description">
+                    このテキストは <strong>em 単位</strong> で指定しています。JavaScript で更新される body の font-size を起点に、
+                    フォントスケールの変更に連動してスケールします。
+                </p>
+            </div>
+            <div class="card">
+                <span class="badge good-badge">GOOD</span>
+                <div class="good-title">アクセシビリティ対応のコンテンツ</div>
+                <p class="good-description">
+                    タイトル: <code>font-size: 1.143em</code>（≈16px）、説明文: <code>font-size: 0.857em</code>（≈12px）。
+                    em により body のサイズ変化に追従します。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ❌ 未対応 -->
+    <section class="bad-section">
+        <div class="section-label">❌ 未対応 — px を固定指定</div>
+        <div class="card-list">
+            <div class="card bad-card">
+                <span class="badge bad-badge">BAD</span>
+                <div class="bad-title">お知らせ：新機能がリリースされました</div>
+                <p class="bad-description">
+                    このテキストは <strong>px 固定</strong>（16px / 12px）です。上のセクションと比べてください。
+                    フォントスケールを変更してもサイズが変わりません。
+                </p>
+            </div>
+            <div class="card bad-card">
+                <span class="badge bad-badge">BAD</span>
+                <div class="bad-title">アクセシビリティに非対応のコンテンツ</div>
+                <p class="bad-description">
+                    文字サイズを大きく設定しているユーザー（約 25〜35%）にとって、
+                    このテキストは読みにくいままです。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 実装コード -->
+    <section>
+        <div class="section-label">実装のポイント</div>
+        <div class="code-block">
+<pre><span class="c-comment">// ① onConfigurationChanged でスケール変化を検知</span>
+<span class="c-selector">override fun</span> <span class="c-val-good">onConfigurationChanged</span>(newConfig: Configuration) {
+  <span class="c-prop">super</span>.onConfigurationChanged(newConfig)
+  <span class="c-prop">val</span> scale = newConfig.<span class="c-val-good">fontScale</span>
+  webView.evaluateJavascript(<span class="c-val">"setFontScale(${'$'}scale)"</span>, <span class="c-prop">null</span>)
+}
+
+<span class="c-comment">/* ② font-size は em（body 基準の相対値）*/</span>
+<span class="c-selector">.title</span> {
+  <span class="c-prop">font-size</span>: <span class="c-val-good">1.143em</span>; <span class="c-comment">/* ✅ スケールする */</span>
+}
+
+<span class="c-comment">/* ❌ px 固定はスケールしない */</span>
+<span class="c-bad-sel">.bad-title</span> {
+  <span class="c-prop">font-size</span>: <span class="c-val-bad">16px</span>; <span class="c-comment">/* ❌ 変化しない */</span>
+}</pre>
+        </div>
+    </section>
+
+    <script>
+        // Android アプリから呼び出される: body の font-size を更新
+        function setFontScale(scale) {
+            document.body.style.fontSize = (16 * scale) + 'px';
+            updateFontSizeDisplay();
+        }
+
+        // body の実際のフォントサイズを表示（フォントスケールの値を可視化）
+        function updateFontSizeDisplay() {
+            const size = parseFloat(window.getComputedStyle(document.body).fontSize);
+            document.getElementById('font-size-value').textContent = size.toFixed(1) + 'px';
+        }
+
+        updateFontSizeDisplay();
+    </script>
+</body>
+</html>
