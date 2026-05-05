@@ -7,6 +7,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,9 +39,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun applyFontScale(fontScale: Float) {
-        // JavaScript 経由で HTML に fontScale を渡す
-        // HTML 側で body の font-size を更新 → em 単位がスケール、px 固定は変化なし
-        webView.evaluateJavascript("setFontScale($fontScale)", null)
+        // fontScale 1.0 → 100（標準）, 2.0 → 200（200%）
+        // px・em 問わず WebView 内のテキスト全体をスケールする
+        webView.settings.textZoom = (fontScale * 100).roundToInt()
 
         fontScaleLabel.text = fontScaleDisplayName(fontScale)
     }
