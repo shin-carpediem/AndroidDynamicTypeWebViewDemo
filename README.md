@@ -69,15 +69,6 @@ function setFontScale(scale) {
 .bad-title   { font-size: 16px; }
 ```
 
-## デモ画面の構成
-
-| セクション | 内容 |
-|---|---|
-| ステータスバー | 現在のフォントスケール名を表示（ネイティブ TextView） |
-| ✅ 対応済み | `em` 単位で指定したテキスト。フォントスケール変更に連動してスケール |
-| ❌ 未対応 | `px` 固定のテキスト。フォントスケールを変更してもサイズが変わらない |
-| 実装コード | Kotlin + CSS のポイントをシンタックスハイライト付きで表示 |
-
 ## 動作確認方法
 
 1. Android Studio でプロジェクトを開いてエミュレーターまたは実機で起動
@@ -91,16 +82,3 @@ function setFontScale(scale) {
 - Android 7.0+ (API 24+)
 - Android Studio Ladybug 以降推奨
 - Kotlin 2.0+
-
-## ファイル構成
-
-```
-app/src/main/
-├── AndroidManifest.xml                          # configChanges="fontScale" を設定
-├── kotlin/.../MainActivity.kt                   # onConfigurationChanged / JS 注入
-├── assets/
-│   └── demo.html                                # em vs px を比較するデモページ
-└── res/
-    └── layout/
-        └── activity_main.xml                    # ステータスバー + WebView のレイアウト
-```
