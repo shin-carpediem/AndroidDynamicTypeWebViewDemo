@@ -32,7 +32,7 @@ CSS の単位（px・em・rem）に関係なくテキスト全体がスケール
 
 Activity を再生成せず `onConfigurationChanged` でフォントスケール変化を受け取れるようにします。
 
-### ② Kotlin: フォントスケール変化を検知して `setTextZoom` で反映
+### ② Kotlin: フォントスケール変化を検知して `WebSettings.setTextZoom(int)` で反映
 
 ```kotlin
 // 起動時の初期化
@@ -53,7 +53,7 @@ private fun applyFontScale(fontScale: Float) {
 
 ### ③ CSS: テキストは単位を問わずスケールされる
 
-`setTextZoom` はレンダリングエンジンレベルで適用されるため、HTML/JS の変更は不要です。
+`WebSettings.setTextZoom(int)` はレンダリングエンジンレベルで適用されるため、HTML/JS の変更は不要です。
 
 ```css
 /* ✅ px 固定でも setTextZoom でスケールされる */
