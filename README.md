@@ -3,7 +3,7 @@
 Android の **フォントスケール** を WebView 上でもスケールさせる方法を示すデモアプリです。  
 [iOS 版（DynamicTypeWebViewDemo）](https://github.com/shin-carpediem/DynamicTypeWebViewDemo) の Android 対応版です。
 
-<img width="350" alt="Screenshot_20260503_125638" src="https://github.com/user-attachments/assets/e926dfec-7b35-4737-b33f-20bb19c535a5" />
+<img width="350" alt="Screenshot_20260505_230214" src="https://github.com/user-attachments/assets/0f5afe35-278f-4ed2-9bf3-9a5308854c32" />
 
 ## 概要
 
