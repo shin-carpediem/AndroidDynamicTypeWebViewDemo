@@ -1,4 +1,4 @@
-package com.example.dynamictypewebviewdemo
+package com.androidDynamicTypeWebViewDemo
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration

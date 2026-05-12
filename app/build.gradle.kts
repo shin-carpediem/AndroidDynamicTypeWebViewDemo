@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.dynamictypewebviewdemo"
+    namespace = "com.androidDynamicTypeWebViewDemo"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.dynamictypewebviewdemo"
+        applicationId = "com.androidDynamicTypeWebViewDemo"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
